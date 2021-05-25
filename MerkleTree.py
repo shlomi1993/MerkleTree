@@ -31,6 +31,7 @@ class MerkleTree:
                 else:
                     nodes.append(self.nodes[i])
                     break
+                    break
                 parent = Node(left_child.hashed_value + right_child.hashed_value)
                 parent.left = left_child
                 parent.right = right_child
