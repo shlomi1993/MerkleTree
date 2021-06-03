@@ -1,4 +1,4 @@
-# Shlomi Ben-Shushan, 311408264, Ofir Ben-Ezra, <206073488>
+# Shlomi Ben-Shushan, 311408264, Ofir Ben-Ezra, 206073488
 
 # Import hashlib, base64 and cryptography as instructed.
 import hashlib
