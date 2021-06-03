@@ -124,9 +124,9 @@ class MerkleTree:
             print()
             return
 
-        POI = self.root.hash + ' '
+        POI = self.root.hash[0:3] + ' '
         while (me != self.root):
-            POI = me.brother().hash + ' '
+            POI += me.brother().hash[0:3] + ' '
             me = me.parent
 
         return POI[:-1]
@@ -136,11 +136,11 @@ class MerkleTree:
     def check_POI(self, data, proof):
 
         try:
-            me = mt.check_data_exist(data)
+            index = mt.check_data_exist(data)
         except:
             print("no such data exist")
             return
-        if(mt.create_POI(me) == proof):
+        if(mt.create_POI(index) == proof):
             print("True")
         else:
             print("False")
