@@ -1,4 +1,4 @@
-# Shlomi Ben-Shushan, 311408264, Ofir Ben-Ezra, <id2>
+# Shlomi Ben-Shushan, 311408264, Ofir Ben-Ezra, <206073488>
 
 # Import hashlib, base64 and cryptography as instructed.
 import hashlib
@@ -123,14 +123,39 @@ class MerkleTree:
         except:
             print()
             return
-        
-        print(self.root.hash + ' ')
+
+        POI = self.root.hash + ' '
         while (me != self.root):
-            print(me.brother().hash + ' ')
+            POI = me.brother().hash + ' '
             me = me.parent
-            
+
+        return POI[:-1]
+
+
     # Task 4 - check proof of inclusion.
-    
+    def check_POI(self, data, proof):
+
+        try:
+            me = mt.check_data_exist(data)
+        except:
+            print("no such data exist")
+            return
+        if(mt.create_POI(me) == proof):
+            print("True")
+        else:
+            print("False")
+
+    # check if data exist at leaves array
+    def check_data_exist(self, data):
+        index = 0
+        for leave in self.leaves:
+            if(leave.value == data):
+                return index
+            index += 1
+        else:
+            raise Exception ("no data exist")
+
+
     # Task 5 - create public and private keys using RSA
     def create_keys(self):
         
@@ -186,7 +211,7 @@ class MerkleTree:
                 )
             print(True)
         except:
-            print(False) 
+            print(False)
 
 
 # Define zero-hashes array that map between tree depth to hash of all zeros below.
@@ -338,8 +363,15 @@ while (1):
             print()
             continue
         else:
-            mt.create_POI(args[1])
-            
+            print(mt.create_POI(args[1]))
+
+    if (operation == 4):
+        if (len(args) != 3):
+            print()
+            continue
+        else:
+            mt.check_POI(args[1], args[2])
+
     if (operation == 5):
         mt.create_keys()
         
