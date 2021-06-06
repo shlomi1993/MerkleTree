@@ -4,6 +4,7 @@
 # Import hashlib, base64 and cryptography as instructed.
 import hashlib
 import base64
+from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -184,7 +185,8 @@ class MerkleTree:
         try:
             x = int(x)   
         except:
-            return ''
+            print()
+            return
 
         # Get root's hash (create part A).
         proof = self.calculate_root_hash() + ' '
@@ -197,7 +199,8 @@ class MerkleTree:
         try:
             node = realLeaves[x]   
         except:
-            return ''
+            print()
+            return        
         
         # Concatenate sub-proofs (create part B).
         while (node != self.root):
@@ -389,8 +392,9 @@ class SparseMerkleTree:
             return proof[:-1]
         
         # Else, The leaf is unmarked.
-        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         index_b = bin(index)[2:].zfill(256)
+        
+        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         node = self.root
         for bit in index_b:
             if bit == '1':

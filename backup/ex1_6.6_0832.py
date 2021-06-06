@@ -14,7 +14,7 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 
-# Set global maximul digest (256 bits are 1)
+# Set global maximum digest (256 bits are 1)
 max_digest = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
 
@@ -62,6 +62,7 @@ def display(node):
     print('value: ' + node.value[0:15] + ' hash: ' + node.hash[0:15])
     if node.right is not None:
         display(node.right)
+
 
 # This function keep reading user's input until its length is 0.
 def sequential_input(start_string):
@@ -184,7 +185,8 @@ class MerkleTree:
         try:
             x = int(x)   
         except:
-            return ''
+            print()
+            return
 
         # Get root's hash (create part A).
         proof = self.calculate_root_hash() + ' '
@@ -197,7 +199,8 @@ class MerkleTree:
         try:
             node = realLeaves[x]   
         except:
-            return ''
+            print()
+            return        
         
         # Concatenate sub-proofs (create part B).
         while (node != self.root):
@@ -311,8 +314,8 @@ class SparseMerkleTree:
         self.root = SparseNode()
         self.root.hash = zero_hashes[0]
         self.marked_leaves = []
-        self.left_all_zeros = True
-        self.right_all_zeros = True
+        self.left_all_zeros = 1
+        self.right_all_zeros = 1
 
     # Task 8 - mark a leaf.
     def mark_leaf(self, digest):
@@ -321,11 +324,11 @@ class SparseMerkleTree:
         index = int(digest, 16)
         index_b = bin(index)[2:].zfill(256)
         
-        # Check leaf side.
+        # Check the side of the leaf.
         if index < max_digest // 2:
-            self.left_all_zeros = False
+            self.left_all_zeros = 0
         else:
-            self.right_all_zeros = False
+            self.right_all_zeros = 0
         
         # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         node = self.root
@@ -335,7 +338,7 @@ class SparseMerkleTree:
                     node.right = SparseNode()
                     node.right.parent = node
                 node = node.right
-            if bit == '0':
+            elif bit == '0':
                 if node.left is None:
                     node.left = SparseNode()
                     node.left.parent = node
@@ -366,8 +369,7 @@ class SparseMerkleTree:
         
         # If there are nor marked leaves part B is root's hash.
         if len(self.marked_leaves) == 0:
-            proof += self.root.hash
-            return proof
+            return proof + self.root.hash
         
         # Convert deigest to index.
         index = int(digest, 16)
@@ -382,15 +384,16 @@ class SparseMerkleTree:
         # If the leaf is found, concatenate sub-proofs (create part B) and return proof.
         if node != None:
             depth = 256
-            while (depth > 0):                    
-                proof += node.brother(depth).hash + ' '
+            while (depth > 0):
+                proof += node.brother().hash + ' '
                 node = node.parent
                 depth -= 1
             return proof[:-1]
         
-        # Else, The leaf is unmarked.
-        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
+        # Else, the leaf is unmarked.
         index_b = bin(index)[2:].zfill(256)
+        
+        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         node = self.root
         for bit in index_b:
             if bit == '1':
@@ -398,7 +401,7 @@ class SparseMerkleTree:
                     node.right = SparseNode()
                     node.right.parent = node
                 node = node.right
-            if bit == '0':
+            elif bit == '0':
                 if node.left is None:
                     node.left = SparseNode()
                     node.left.parent = node
@@ -428,7 +431,7 @@ class SparseMerkleTree:
         # In any other case, calculate hashes like in a regular Merkle Tree.
         depth = 256
         while (depth > 0):
-            proof += node.brother(depth).hash + ' '
+            proof += node.brother().hash + ' '
             node = node.parent
             depth -= 1
         return proof[:-1]

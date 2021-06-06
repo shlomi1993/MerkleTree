@@ -4,6 +4,7 @@
 # Import hashlib, base64 and cryptography as instructed.
 import hashlib
 import base64
+from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -184,7 +185,8 @@ class MerkleTree:
         try:
             x = int(x)   
         except:
-            return ''
+            print()
+            return
 
         # Get root's hash (create part A).
         proof = self.calculate_root_hash() + ' '
@@ -197,7 +199,8 @@ class MerkleTree:
         try:
             node = realLeaves[x]   
         except:
-            return ''
+            print()
+            return        
         
         # Concatenate sub-proofs (create part B).
         while (node != self.root):
@@ -311,8 +314,8 @@ class SparseMerkleTree:
         self.root = SparseNode()
         self.root.hash = zero_hashes[0]
         self.marked_leaves = []
-        self.left_all_zeros = True
-        self.right_all_zeros = True
+        self.left_all_zeros = 1
+        self.right_all_zeros = 1
 
     # Task 8 - mark a leaf.
     def mark_leaf(self, digest):
@@ -321,11 +324,10 @@ class SparseMerkleTree:
         index = int(digest, 16)
         index_b = bin(index)[2:].zfill(256)
         
-        # Check leaf side.
         if index < max_digest // 2:
-            self.left_all_zeros = False
+            self.left_all_zeros = 0
         else:
-            self.right_all_zeros = False
+            self.right_all_zeros = 0
         
         # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         node = self.root
@@ -388,9 +390,10 @@ class SparseMerkleTree:
                 depth -= 1
             return proof[:-1]
         
-        # Else, The leaf is unmarked.
-        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
+        # Else, ... ???
         index_b = bin(index)[2:].zfill(256)
+        
+        # Find leaf's location and for each '1' in index_b, turn right, for each '0', turn left.
         node = self.root
         for bit in index_b:
             if bit == '1':
